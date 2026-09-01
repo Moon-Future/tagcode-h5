@@ -1,25 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-
-type Contact = { type: string; value: string; privacyMode: string }
-type Content = Record<string, unknown> & { contact?: Contact }
-type PublicPlate = {
-  publicCode: string
-  displayName: string
-  plateType: string
-  themeCode: string
-  content: Content
-}
-
-const typeInfo: Record<string, { icon: string; description: string }> = {
-  PET: { icon: '🐕', description: '防走失身份牌' },
-  VEHICLE: { icon: '🚙', description: '隐私联系车主' },
-  INSTRUCTION: { icon: '🔐', description: '设备使用说明' },
-  HOME_GUIDE: { icon: '🏠', description: '入住指南与说明' },
-  LOST_AND_FOUND: { icon: '🎒', description: '行李与物品联系牌' },
-  MEMORIAL: { icon: '🎁', description: '故事与纪念' },
-  CUSTOM: { icon: '＋', description: '专属数字铭牌' }
-}
+import { detailComponentFor } from './components/plate-details'
+import { plateTypeInfo, type PublicPlate } from './domain/plate'
 
 const plate = ref<PublicPlate | null>(null)
 const loading = ref(true)
@@ -31,16 +13,10 @@ const reportSubmitting = ref(false)
 const code = location.pathname.match(/\/p\/([^/?#]+)/)?.[1] || ''
 const apiBase = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 
-const info = computed(() => typeInfo[plate.value?.plateType || 'CUSTOM'] || typeInfo.CUSTOM)
+const info = computed(() => plateTypeInfo[plate.value?.plateType || 'CUSTOM'] || plateTypeInfo.CUSTOM)
 const content = computed(() => plate.value?.content || {})
-const subjectName = computed(() => String(content.value.name || content.value.title || ''))
-const ownerName = computed(() => String(content.value.ownerNickname || content.value.signature || ''))
-const description = computed(() => String(content.value.personality || content.value.message
-  || content.value.checkInGuide || content.value.contactInstruction || content.value.introduction || ''))
-const notice = computed(() => String(content.value.healthNotice || content.value.notice
-  || content.value.thankYouMessage || content.value.lostMessage || ''))
 const phone = computed(() => content.value.contact?.value || '')
-const maskedPhone = computed(() => phone.value.replace(/^(\d{3})\d+(\d{4})$/, '$1 **** $2'))
+const detailComponent = computed(() => detailComponentFor(plate.value?.plateType || 'CUSTOM'))
 
 onMounted(async () => {
   if (!code) {
@@ -120,16 +96,8 @@ async function submitReport() {
   <main v-else-if="errorMessage" class="state-page error-state">
     <span>◇</span><h1>暂时无法查看</h1><p>{{ errorMessage }}</p>
   </main>
-  <main v-else-if="plate" :class="['plate-page', `style-${plate.themeCode}`]">
-    <section class="identity"><div class="avatar">{{ info.icon }}</div><h1>{{ plate.displayName }}</h1><p>{{ info.description }}</p></section>
-    <section class="detail-card">
-      <div class="section"><h2>基本信息</h2><dl><div><dt>名称</dt><dd>{{ subjectName }}</dd></div><div v-if="description"><dt>详细信息</dt><dd>{{ description }}</dd></div></dl></div>
-      <div v-if="ownerName || phone" class="section"><h2>联系人信息</h2><dl><div v-if="ownerName"><dt>称呼</dt><dd>{{ ownerName }}</dd></div><div v-if="phone"><dt>联系方式</dt><dd>{{ maskedPhone }}</dd></div></dl></div>
-      <div v-if="notice" class="section"><h2>注意事项</h2><p class="notice">{{ notice }}</p></div>
-      <button v-if="phone" class="contact" @click="callOwner">☎ 联系主人</button>
-    </section>
-    <button class="report-link" @click="reportOpen = true">举报此页面</button>
-    <footer>贴个码 · 让联系更简单</footer>
+  <main v-else-if="plate" :class="['plate-page', `style-${plate.themeCode}`, `type-${plate.plateType.toLowerCase()}`]">
+    <component :is="detailComponent" :content="content" :info="info" :display-name="plate.displayName" :api-base="apiBase" @contact="callOwner" @feedback="reportOpen = true" />
     <div v-if="reportOpen" class="report-mask" @click.self="reportOpen = false">
       <form class="report-sheet" @submit.prevent="submitReport">
         <h2>举报此页面</h2>

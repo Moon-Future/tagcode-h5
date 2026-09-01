@@ -1,0 +1,23 @@
+<script setup lang="ts">
+withDefaults(defineProps<{ name: string; size?: number; filled?: boolean }>(), { size: 20, filled: false })
+</script>
+
+<template>
+  <svg class="app-icon" :width="size" :height="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <template v-if="name === 'paw'"><circle cx="7" cy="7" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="17" cy="7" r="2"/><circle cx="5" cy="12" r="1.8"/><path d="M8 18c0-3 1.8-6 4-6s4 3 4 6c0 1.5-1.2 2.5-2.7 2.1a5 5 0 0 0-2.6 0C9.2 20.5 8 19.5 8 18Z"/></template>
+    <template v-else-if="name === 'breed'"><path d="m12 3 1.2 4.1L17 9l-3.8 1.9L12 15l-1.2-4.1L7 9l3.8-1.9L12 3Z"/><path d="m18.5 14 .7 2.3 2.3.7-2.3.7-.7 2.3-.7-2.3-2.3-.7 2.3-.7.7-2.3Z"/></template>
+    <template v-else-if="name === 'male'"><circle cx="10" cy="14" r="5"/><path d="m14 10 6-6m-4 0h4v4"/></template>
+    <template v-else-if="name === 'female'"><circle cx="12" cy="9" r="5"/><path d="M12 14v7m-3-3h6"/></template>
+    <template v-else-if="name === 'calendar'"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18"/><path d="m9 15 2 2 4-4"/></template>
+    <template v-else-if="name === 'birthday'"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M12 2v2"/></template>
+    <template v-else-if="name === 'scissors'"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="m8.5 8.5 11 7.5M8.5 15.5 20 8"/></template>
+    <template v-else-if="name === 'bell'"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></template>
+    <template v-else-if="name === 'user'"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></template>
+    <template v-else-if="name === 'phone'"><path d="M7 3H4.5A1.5 1.5 0 0 0 3 4.5C3 13.6 10.4 21 19.5 21a1.5 1.5 0 0 0 1.5-1.5V17l-4-2-1.5 2a13 13 0 0 1-8.5-8.5L9 7 7 3Z"/></template>
+    <template v-else-if="name === 'heart'"><path :fill="filled ? 'currentColor' : 'none'" d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 1 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/></template>
+    <template v-else-if="name === 'shield'"><path d="M12 3 20 6v6c0 5-3.4 8-8 10-4.6-2-8-5-8-10V6l8-3Z"/><path d="m9 12 2 2 4-4"/></template>
+    <template v-else-if="name === 'feedback'"><path d="M12 3 4 6v6c0 5 3.4 8 8 10 4.6-2 8-5 8-10V6l-8-3Z"/><path d="M12 8v5m0 3h.01"/></template>
+  </svg>
+</template>
+
+<style scoped>.app-icon{display:inline-block;flex:none;vertical-align:middle}</style>
