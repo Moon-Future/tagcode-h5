@@ -31,11 +31,12 @@ dl,dd { margin: 0; } dl > div { display: flex; padding: 8px 0; border-bottom: 1p
 .type-pet .pet-hero::after { position: absolute; z-index: 1; right: 0; bottom: 0; left: 0; height: 56px; background: linear-gradient(180deg,rgb(244 241 235 / 0%),rgb(244 241 235 / 78%) 72%,#f4f1eb 100%); content: ""; pointer-events: none; }
 .type-pet .hero-feedback { top: max(15px,env(safe-area-inset-top)); right: 12px; height: 32px; padding: 0 12px; font-size: 12px; }
 .type-pet .pet-content-wrap { z-index: 2; width: calc(100% - 24px); margin-top: -27px; }
-.type-pet .pet-summary-card { min-height: 0; padding: 18px 14px 13px 92px; border-radius: 16px; }
-.type-pet .summary-avatar { top: 14px; left: 14px; width: 58px; height: 58px; border-width: 3px; }
+.type-pet .pet-summary-card { min-height: 0; padding: 10px; border-radius: 16px; grid-template-columns: 64px minmax(0, 1fr); column-gap: 14px; }
+.type-pet .summary-avatar { position: static; align-self: center; box-sizing: border-box; width: 58px; height: 58px; border-width: 3px; }
+.type-pet .summary-main { min-width: 0; align-self: center; }
 .type-pet .pet-name-line { gap: 6px; }.type-pet .pet-name-line h1 { font-size: 23px; }.type-pet .gender-symbol { font-size: 19px; }.type-pet .pet-name-line strong { padding: 4px 9px; font-size: 12px; }
 .type-pet .summary-meta { margin-top: 5px; }.type-pet .summary-meta span { padding: 0 6px; font-size: 12px; }.type-pet .summary-meta span:first-child { margin-left: 0; padding-left: 0; }
-.type-pet .summary-call,.type-pet .found-tip { grid-column: 1 / -1; margin-left: -78px; }.type-pet .summary-call { width: calc(100% + 78px); height: 39px; margin-top: 15px; border-radius: 8px; font-size: 15px; }.type-pet .found-tip { margin-top: 8px; font-size: 12px; }
+.type-pet .summary-call,.type-pet .found-tip { grid-column: 1 / -1; margin-left: 0; }.type-pet .summary-call { width: 100%; height: 39px; margin-top: 15px; border-radius: 8px; font-size: 15px; }.type-pet .found-tip { margin-top: 8px; font-size: 12px; }
 .type-pet .pet-card { margin-top: 9px; padding: 14px; border-radius: 15px; }.type-pet .pet-card h2 { margin-bottom: 10px; font-size: 15px; }.type-pet .pet-card h2 > i { margin-right: 7px; font-size: 17px; }
 .type-pet .basic-grid > div { padding: 8px 5px; gap: 4px; }.type-pet .basic-grid > div > i { width: 18px; flex-basis: 18px; font-size: 16px; }.type-pet .basic-grid small { font-size: 12px; }.type-pet .basic-grid strong { margin-top: 2px; font-size: 12px; }
 .type-pet .reminder-card li { gap: 7px; padding: 6px 2px; font-size: 12px; line-height: 1.5; }.type-pet .reminder-card li i { width: 20px; flex-basis: 20px; }.type-pet .owner-content { grid-template-columns: 42px 1fr; gap: 9px; }.type-pet .owner-avatar { width: 40px; height: 40px; font-size: 23px; }.type-pet .owner-content strong { font-size: 14px; }.type-pet .owner-content p { font-size: 12px; }.type-pet .owner-content button { width: 100%; min-width: 0; height: 37px; margin-top: 7px; grid-column: 1 / -1; font-size: 12px; }
