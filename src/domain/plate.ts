@@ -18,6 +18,7 @@ export type PlateTypeInfo = { icon: string; description: string }
 
 export const plateTypeInfo: Record<string, PlateTypeInfo> = {
   PET: { icon: '🐕', description: '防走失身份牌' },
+  STUDENT: { icon: '🎓', description: '学生身份与紧急联系' },
   VEHICLE: { icon: '🚙', description: '隐私联系车主' },
   INSTRUCTION: { icon: '🔐', description: '设备使用说明' },
   HOME_GUIDE: { icon: '🏠', description: '入住指南与说明' },

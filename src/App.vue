@@ -94,7 +94,7 @@ async function submitReport() {
 <template>
   <main v-if="loading" class="state-page">正在加载铭牌…</main>
   <main v-else-if="errorMessage" class="state-page error-state">
-    <span>◇</span><h1>暂时无法查看</h1><p>{{ errorMessage }}</p>
+    <img class="empty-state-icon" src="/images/states/empty-plate.png" alt=""><h1>暂时无法查看</h1><p>{{ errorMessage }}</p>
   </main>
   <main v-else-if="plate" :class="['plate-page', `style-${plate.themeCode}`, `type-${plate.plateType.toLowerCase()}`]">
     <component :is="detailComponent" :content="content" :info="info" :display-name="plate.displayName" :api-base="apiBase" @contact="callOwner" @feedback="reportOpen = true" />
