@@ -17,6 +17,8 @@ withDefaults(defineProps<{ name: string; size?: number; filled?: boolean }>(), {
     <template v-else-if="name === 'heart'"><path :fill="filled ? 'currentColor' : 'none'" d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 1 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/></template>
     <template v-else-if="name === 'shield'"><path d="M12 3 20 6v6c0 5-3.4 8-8 10-4.6-2-8-5-8-10V6l8-3Z"/><path d="m9 12 2 2 4-4"/></template>
     <template v-else-if="name === 'feedback'"><path d="M12 3 4 6v6c0 5 3.4 8 8 10 4.6-2 8-5 8-10V6l-8-3Z"/><path d="M12 8v5m0 3h.01"/></template>
+    <template v-else-if="name === 'car'"><path d="m5 11 1.8-5h10.4l1.8 5"/><path d="M4 11h16a2 2 0 0 1 2 2v4H2v-4a2 2 0 0 1 2-2Z"/><circle cx="6" cy="14" r="1"/><circle cx="18" cy="14" r="1"/><path d="M4 17v3h3v-3m10 0v3h3v-3"/></template>
+    <template v-else-if="name === 'location'"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></template>
   </svg>
 </template>
 
