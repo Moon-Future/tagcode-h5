@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-label="默认车辆图片">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef7ff"/><stop offset="1" stop-color="#d9eaff"/></linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c7d9eb"/><stop offset="1" stop-color="#e9f2fa"/></linearGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#b9c9d9"/></linearGradient>
+  </defs>
+  <rect width="900" height="560" fill="url(#sky)"/><path d="M0 350h900v210H0z" fill="url(#road)"/>
+  <path d="M0 420h900M110 560l170-210M790 560L620 350" fill="none" stroke="#fff" stroke-width="10" opacity=".7"/>
+  <g opacity=".45" fill="#b7d1ea"><path d="M70 350V210h70v140zM155 350V165h78v185zM255 350V235h62v115zM700 350V195h70v155zM785 350V240h48v110z"/></g>
+  <g transform="translate(145 150)">
+    <path d="M90 205 145 95c12-24 35-39 62-42l220-22c35-4 68 10 91 38l55 69 46 15c22 7 37 27 37 50v48H48v-26c0-18 14-34 32-37z" fill="url(#body)" stroke="#34495e" stroke-width="8"/>
+    <path d="m178 90 56-8 48 0v76H143zM299 82l119-11c22-2 43 6 58 22l39 53H299z" fill="#293c50" stroke="#8097aa" stroke-width="6"/>
+    <path d="M145 168h367M67 210h580" stroke="#8ea2b4" stroke-width="7"/>
+    <circle cx="170" cy="246" r="47" fill="#273746"/><circle cx="170" cy="246" r="23" fill="#d8e3ec"/>
+    <circle cx="550" cy="246" r="47" fill="#273746"/><circle cx="550" cy="246" r="23" fill="#d8e3ec"/>
+    <rect x="355" y="184" width="112" height="30" rx="6" fill="#f4f7fa" stroke="#8ca0b1" stroke-width="4"/>
+    <path d="M76 151h52l-18 24H66zM628 150h38l23 24h-54z" fill="#78bbef"/>
+  </g>
+</svg>

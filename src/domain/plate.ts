@@ -4,6 +4,8 @@ export type ImageContent = { objectKey: string; altText?: string }
 export type PlateContent = Record<string, unknown> & {
   contact?: Contact
   avatar?: ImageContent
+  ownerName?: string
+  ownerNickname?: string
 }
 
 export type PublicPlate = {
