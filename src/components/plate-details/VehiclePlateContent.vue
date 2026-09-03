@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { text, type PlateContent } from '../../domain/plate'
+import { mediaUrl, text, type PlateContent } from '../../domain/plate'
 import AppIcon from '../AppIcon.vue'
 
-const props = defineProps<{ content: PlateContent; displayName: string }>()
+const props = defineProps<{ content: PlateContent; displayName: string; apiBase: string }>()
 defineEmits<{ contact: []; feedback: [] }>()
 
 const plateNumber = computed(() => text(props.content.name) || props.displayName)
@@ -11,6 +11,7 @@ const vehicleNote = computed(() => text(props.content.model))
 const color = computed(() => text(props.content.color))
 const message = computed(() => text(props.content.message))
 const note = computed(() => text(props.content.note))
+const photo = computed(() => mediaUrl(props.apiBase, props.content.photo as { objectKey: string; altText?: string } | undefined))
 const phone = computed(() => props.content.contact?.value || '')
 </script>
 
@@ -28,6 +29,7 @@ const phone = computed(() => props.content.contact?.value || '')
     </header>
 
     <div class="vehicle-content">
+      <section v-if="photo" class="vehicle-photo-card"><img :src="photo" :alt="`${plateNumber}的车辆照片`"></section>
       <section v-if="message" class="vehicle-message-card">
         <div class="message-mark">“</div>
         <div><small>车主提示</small><p>{{ message }}</p></div>
