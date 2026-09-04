@@ -21,6 +21,10 @@ withDefaults(defineProps<{ name: string; size?: number; filled?: boolean }>(), {
     <template v-else-if="name === 'location'"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></template>
     <template v-else-if="name === 'lost'"><path d="M5 8.5V7a2 2 0 0 1 2-2h3l1.4-1.4a2 2 0 0 1 2.8 0L15.6 5H17a2 2 0 0 1 2 2v1.5"/><rect x="3" y="8.5" width="18" height="12" rx="3"/><path d="M3 13h18M8 8.5v4.5m8-4.5V13"/></template>
     <template v-else-if="name === 'message'"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 3v-3a2 2 0 0 1-1-1.7V6a2 2 0 0 1 2-2Z"/><path d="M8 9h8m-8 4h5"/></template>
+    <template v-else-if="name === 'lock'"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></template>
+    <template v-else-if="name === 'key'"><circle cx="8" cy="15" r="4"/><path d="m11 12 8-8M16 4h3v3M5 18l-2 2m5-2-2 3"/></template>
+    <template v-else-if="name === 'steps'"><circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><path d="M7 6h5a3 3 0 0 1 3 3v6M7 18h10M17 15l3 3-3 3"/></template>
+    <template v-else-if="name === 'warning'"><path d="M10.3 4.2 2.8 18a2 2 0 0 0 1.8 3h14.8a2 2 0 0 0 1.8-3L13.7 4.2a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4m0 4h.01"/></template>
   </svg>
 </template>
 

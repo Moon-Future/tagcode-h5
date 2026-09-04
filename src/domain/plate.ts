@@ -9,6 +9,11 @@ export type PlateContent = Record<string, unknown> & {
   message?: string
   ownerName?: string
   ownerNickname?: string
+  brand?: string
+  summary?: string
+  notice?: string
+  infoItems?: Array<{ label: string; value: string }>
+  steps?: Array<{ title: string; description: string }>
 }
 
 export type PublicPlate = {
