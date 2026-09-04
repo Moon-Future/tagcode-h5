@@ -19,6 +19,8 @@ withDefaults(defineProps<{ name: string; size?: number; filled?: boolean }>(), {
     <template v-else-if="name === 'feedback'"><path d="M12 3 4 6v6c0 5 3.4 8 8 10 4.6-2 8-5 8-10V6l-8-3Z"/><path d="M12 8v5m0 3h.01"/></template>
     <template v-else-if="name === 'car'"><path d="m5 11 1.8-5h10.4l1.8 5"/><path d="M4 11h16a2 2 0 0 1 2 2v4H2v-4a2 2 0 0 1 2-2Z"/><circle cx="6" cy="14" r="1"/><circle cx="18" cy="14" r="1"/><path d="M4 17v3h3v-3m10 0v3h3v-3"/></template>
     <template v-else-if="name === 'location'"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></template>
+    <template v-else-if="name === 'lost'"><path d="M5 8.5V7a2 2 0 0 1 2-2h3l1.4-1.4a2 2 0 0 1 2.8 0L15.6 5H17a2 2 0 0 1 2 2v1.5"/><rect x="3" y="8.5" width="18" height="12" rx="3"/><path d="M3 13h18M8 8.5v4.5m8-4.5V13"/></template>
+    <template v-else-if="name === 'message'"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 3v-3a2 2 0 0 1-1-1.7V6a2 2 0 0 1 2-2Z"/><path d="M8 9h8m-8 4h5"/></template>
   </svg>
 </template>
 
