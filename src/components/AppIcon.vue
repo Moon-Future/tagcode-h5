@@ -25,6 +25,8 @@ withDefaults(defineProps<{ name: string; size?: number; filled?: boolean }>(), {
     <template v-else-if="name === 'key'"><circle cx="8" cy="15" r="4"/><path d="m11 12 8-8M16 4h3v3M5 18l-2 2m5-2-2 3"/></template>
     <template v-else-if="name === 'steps'"><circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><path d="M7 6h5a3 3 0 0 1 3 3v6M7 18h10M17 15l3 3-3 3"/></template>
     <template v-else-if="name === 'warning'"><path d="M10.3 4.2 2.8 18a2 2 0 0 0 1.8 3h14.8a2 2 0 0 0 1.8-3L13.7 4.2a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4m0 4h.01"/></template>
+    <template v-else-if="name === 'image'"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m4 17 5-5 4 4 2-2 5 5"/></template>
+    <template v-else-if="name === 'edit'"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4M3 21h18"/></template>
   </svg>
 </template>
 
