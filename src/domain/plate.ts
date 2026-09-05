@@ -14,7 +14,10 @@ export type PlateContent = Record<string, unknown> & {
   brand?: string
   summary?: string
   notice?: string
-  infoItems?: Array<{ label: string; value: string }>
+  infoItems?: Array<{ label: string; value: string; showOnPlate?: boolean }>
+  tagline?: string
+  contactName?: string
+  textSections?: Array<{ title?: string; content: string }>
   steps?: Array<{ title: string; description: string }>
   memorialDate?: string
   theme?: string
