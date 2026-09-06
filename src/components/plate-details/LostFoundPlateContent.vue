@@ -20,7 +20,7 @@ const images = computed(() => (props.content.images || []).slice(0, 6) as ImageC
   <article class="lost-found-detail">
     <header class="lost-hero">
       <button class="hero-feedback" @click="emit('feedback')"><AppIcon name="feedback" :size="15"/>反馈信息</button>
-      <div class="lost-gallery"><ImageCarousel :images="images" :api-base="apiBase" fallback="/images/lost-found/default-lost.svg" :alt="`${name}的物品照片`"/></div>
+      <div class="lost-gallery"><ImageCarousel :images="images" :api-base="apiBase" fallback="/images/lost-found/detail-fallback-v1.jpg" :alt="`${name}的物品照片`"/></div>
     </header>
 
     <div class="lost-content">

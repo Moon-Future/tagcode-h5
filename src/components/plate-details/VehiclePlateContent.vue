@@ -16,7 +16,7 @@ const images = computed(() => Array.isArray(props.content.images) ? props.conten
 const phone = computed(() => props.content.contact?.value || '')
 const isElectric = computed(() => Array.from(plateNumber.value.replace(/\s/g, '')).length > 7)
 const plateClass = computed(() => isElectric.value ? 'vehicle-plate-electric' : 'vehicle-plate-fuel')
-const defaultPhoto = '/images/vehicle/default-car.svg'
+const defaultPhoto = '/images/vehicle/detail-fallback-v1.jpg'
 </script>
 
 <template>
