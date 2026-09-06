@@ -4,10 +4,7 @@ export type ImageContent = { objectKey: string; altText?: string }
 export type PlateContent = Record<string, unknown> & {
   contact?: Contact
   avatar?: ImageContent
-  cover?: ImageContent
   images?: ImageContent[]
-  photos?: ImageContent[]
-  image?: ImageContent
   message?: string
   ownerName?: string
   ownerNickname?: string
@@ -50,8 +47,14 @@ export const plateTypeInfo: Record<string, PlateTypeInfo> = {
 
 export function text(value: unknown) { return typeof value === 'string' ? value : '' }
 
-export function mediaUrl(apiBase: string, image?: ImageContent) {
+export function assetUrl(path: string) {
+  const base = import.meta.env.VITE_ASSET_BASE_URL || 'https://static.itchensi.com/tagcode'
+  return `${base.replace(/\/$/, '')}/${path.replace(/^\//, '')}`
+}
+
+export function mediaUrl(_apiBase: string, image?: ImageContent) {
+  const mediaBaseUrl = import.meta.env.VITE_MEDIA_BASE_URL || 'https://media.itchensi.com'
   return image?.objectKey
-    ? `${apiBase}/api/v1/tag/public/media?objectKey=${encodeURIComponent(image.objectKey)}`
+    ? `${mediaBaseUrl.replace(/\/$/, '')}/${image.objectKey.replace(/^\//, '')}`
     : ''
 }

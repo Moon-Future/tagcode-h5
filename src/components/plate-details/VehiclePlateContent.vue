@@ -2,6 +2,8 @@
 import { computed } from 'vue'
 import { mediaUrl, text, type PlateContent } from '../../domain/plate'
 import AppIcon from '../AppIcon.vue'
+import ImageCarousel from '../ImageCarousel.vue'
+import PlateFooter from '../PlateFooter.vue'
 
 const props = defineProps<{ content: PlateContent; displayName: string; apiBase: string }>()
 defineEmits<{ contact: []; feedback: [] }>()
@@ -10,7 +12,7 @@ const plateNumber = computed(() => text(props.content.name) || props.displayName
 const vehicleNote = computed(() => text(props.content.model))
 const note = computed(() => text(props.content.note))
 const ownerName = computed(() => text(props.content.ownerName) || text(props.content.ownerNickname))
-const photo = computed(() => mediaUrl(props.apiBase, props.content.photo as { objectKey: string; altText?: string } | undefined))
+const images = computed(() => Array.isArray(props.content.images) ? props.content.images : [])
 const phone = computed(() => props.content.contact?.value || '')
 const isElectric = computed(() => Array.from(plateNumber.value.replace(/\s/g, '')).length > 7)
 const plateClass = computed(() => isElectric.value ? 'vehicle-plate-electric' : 'vehicle-plate-fuel')
@@ -22,7 +24,7 @@ const defaultPhoto = '/images/vehicle/default-car.svg'
     <header class="vehicle-hero">
       <button class="hero-feedback" @click="$emit('feedback')"><AppIcon name="feedback" :size="15"/>反馈信息</button>
       <div class="vehicle-photo">
-        <img :src="photo || defaultPhoto" :alt="`${plateNumber}的车辆照片`">
+        <ImageCarousel :images="images" :api-base="apiBase" :fallback="defaultPhoto" :alt="`${plateNumber}的车辆照片`"/>
       </div>
     </header>
 
@@ -48,7 +50,7 @@ const defaultPhoto = '/images/vehicle/default-car.svg'
         <p>{{ note }}</p>
       </section>
 
-      <footer><AppIcon name="shield" :size="16"/>贴个码 · 让联系更简单</footer>
+      <PlateFooter/>
     </div>
 
     <div v-if="phone" class="vehicle-sticky"><button @click="$emit('contact')"><AppIcon name="phone" :size="21"/>联系车主</button></div>

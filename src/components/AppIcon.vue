@@ -1,9 +1,19 @@
 <script setup lang="ts">
-withDefaults(defineProps<{ name: string; size?: number; filled?: boolean }>(), { size: 20, filled: false })
+import { computed } from 'vue'
+import { assetUrl } from '../domain/plate'
+
+const props = withDefaults(defineProps<{ name: string; size?: number; filled?: boolean }>(), { size: 20, filled: false })
+const sharedAssetNames = new Set(['paw', 'category', 'breed', 'male', 'female', 'gender-unknown', 'calendar', 'birthday', 'scissors', 'bell', 'user', 'phone', 'heart', 'shield', 'lost', 'message'])
+const sharedAsset = computed(() => {
+  if (!sharedAssetNames.has(props.name)) return ''
+  const extension = ['lost', 'message'].includes(props.name) ? 'svg' : 'png'
+  return assetUrl(`icons/detail-${props.name}.${extension}`)
+})
 </script>
 
 <template>
-  <svg class="app-icon" :width="size" :height="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <span v-if="sharedAsset" class="app-icon app-icon-asset" :style="{ width: `${size}px`, height: `${size}px`, maskImage: `url(${sharedAsset})`, WebkitMaskImage: `url(${sharedAsset})` }" aria-hidden="true"/>
+  <svg v-else class="app-icon" :width="size" :height="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <template v-if="name === 'paw'"><circle cx="7" cy="7" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="17" cy="7" r="2"/><circle cx="5" cy="12" r="1.8"/><path d="M8 18c0-3 1.8-6 4-6s4 3 4 6c0 1.5-1.2 2.5-2.7 2.1a5 5 0 0 0-2.6 0C9.2 20.5 8 19.5 8 18Z"/></template>
     <template v-else-if="name === 'breed'"><path d="m12 3 1.2 4.1L17 9l-3.8 1.9L12 15l-1.2-4.1L7 9l3.8-1.9L12 3Z"/><path d="m18.5 14 .7 2.3 2.3.7-2.3.7-.7 2.3-.7-2.3-2.3-.7 2.3-.7.7-2.3Z"/></template>
     <template v-else-if="name === 'male'"><circle cx="10" cy="14" r="5"/><path d="m14 10 6-6m-4 0h4v4"/></template>
@@ -31,4 +41,4 @@ withDefaults(defineProps<{ name: string; size?: number; filled?: boolean }>(), {
   </svg>
 </template>
 
-<style scoped>.app-icon{display:inline-block;flex:none;vertical-align:middle}</style>
+<style scoped>.app-icon{display:inline-block;flex:none;vertical-align:middle}.app-icon-asset{background:currentColor;mask-position:center;mask-repeat:no-repeat;mask-size:contain;-webkit-mask-position:center;-webkit-mask-repeat:no-repeat;-webkit-mask-size:contain}</style>

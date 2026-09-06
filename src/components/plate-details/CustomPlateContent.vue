@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { mediaUrl, text, type ImageContent, type PlateContent } from '../../domain/plate'
 import AppIcon from '../AppIcon.vue'
+import PlateFooter from '../PlateFooter.vue'
 
 const props = defineProps<{ content: PlateContent; displayName: string; apiBase: string }>()
 defineEmits<{ contact: []; feedback: [] }>()
@@ -9,7 +10,7 @@ const previewIndex = ref<number | null>(null)
 const name = computed(() => text(props.content.name) || props.displayName)
 const tagline = computed(() => text(props.content.tagline) || '扫码查看更多信息')
 const images = computed(() => {
-  const values = Array.isArray(props.content.images) ? props.content.images : props.content.cover ? [props.content.cover] : []
+  const values = props.content.images || []
   return values as ImageContent[]
 })
 const infoItems = computed(() => Array.isArray(props.content.infoItems) ? props.content.infoItems : [])
@@ -46,7 +47,7 @@ const previewPhoto = computed(() => previewIndex.value === null ? null : images.
       <section v-if="contactName || phone" class="custom-card custom-contact">
         <h2><i><AppIcon name="user" :size="17"/></i>联系方式</h2><strong v-if="contactName">{{ contactName }}</strong><p v-if="phone">{{ maskedPhone }}</p><button v-if="phone" @click="$emit('contact')"><AppIcon name="phone" :size="17"/>联系我</button>
       </section>
-      <footer><AppIcon name="shield" :size="14"/>贴个码 · 自定义内容，专业呈现</footer>
+      <PlateFooter/>
     </main>
     <button v-if="previewPhoto" class="custom-preview" aria-label="关闭图片预览" @click="previewIndex=null"><img :src="mediaUrl(apiBase,previewPhoto)" :alt="name"></button>
   </article>

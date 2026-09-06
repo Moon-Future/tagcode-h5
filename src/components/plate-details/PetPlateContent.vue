@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { mediaUrl, text, type PlateContent } from '../../domain/plate'
+import { assetUrl, mediaUrl, text, type PlateContent } from '../../domain/plate'
 import AppIcon from '../AppIcon.vue'
+import ImageCarousel from '../ImageCarousel.vue'
+import PlateFooter from '../PlateFooter.vue'
 
 type LostInfo = { active?: boolean; lostAt?: string; location?: string; featureNote?: string; message?: string }
 
@@ -13,7 +15,7 @@ const defaultBackground = '/images/defaults/pet-background.jpg'
 
 const name = computed(() => text(props.content.name) || props.displayName)
 const avatarUrl = computed(() => mediaUrl(props.apiBase, props.content.avatar))
-const backgroundUrl = computed(() => mediaUrl(props.apiBase, props.content.backgroundImage as { objectKey: string } | undefined))
+const images = computed(() => Array.isArray(props.content.images) ? props.content.images : [])
 const ownerName = computed(() => text(props.content.ownerNickname))
 const phone = computed(() => props.content.contact?.value || '')
 const maskedPhone = computed(() => phone.value.replace(/^(\d{3})\d+(\d{4})$/, '$1****$2'))
@@ -45,13 +47,14 @@ const isLost = computed(() => Boolean(lost.value.active))
 const lostAtText = computed(() => text(lost.value.lostAt).replace('T', ' ').slice(0, 16))
 const summaryItems = computed(() => [breed.value || species.value, genderLabel.value, age.value].filter(Boolean))
 const basicItems = computed(() => [
-  { icon: 'paw', label: '宠物类别', value: species.value },
+  { icon: 'category', label: '宠物类别', value: species.value },
   { icon: 'breed', label: '品种', value: breed.value },
-  { icon: genderIcon.value || 'paw', label: '性别', value: genderLabel.value },
+  { icon: genderIcon.value || 'gender-unknown', label: '性别', value: genderLabel.value },
   { icon: 'calendar', label: '年龄', value: age.value },
   { icon: 'birthday', label: '生日', value: birthDate.value },
   { icon: 'scissors', label: '是否绝育', value: neuteredLabel.value }
 ].filter(item => item.value))
+const detailIcon = (name: string) => assetUrl(`icons/detail-${name}.png`)
 
 function useFallback(event: Event, fallback: string) {
   const image = event.currentTarget as HTMLImageElement
@@ -62,7 +65,7 @@ function useFallback(event: Event, fallback: string) {
 <template>
   <article class="pet-detail">
     <header class="pet-hero">
-      <img class="hero-image" :src="backgroundUrl || defaultBackground" alt="宠物背景" @error="useFallback($event, defaultBackground)">
+      <ImageCarousel :images="images" :api-base="apiBase" :fallback="defaultBackground" :alt="`${name}的照片`"/>
       <button class="hero-feedback" @click="$emit('feedback')"><AppIcon name="feedback" :size="15"/>反馈信息</button>
     </header>
 
@@ -79,7 +82,7 @@ function useFallback(event: Event, fallback: string) {
 
       <section v-if="basicItems.length" class="pet-card basic-card">
         <h2><i><AppIcon name="paw" :size="18"/></i>基本信息</h2>
-        <div class="basic-grid"><div v-for="item in basicItems" :key="item.label"><i><AppIcon :name="item.icon" :size="17"/></i><p><small>{{ item.label }}</small><strong>{{ item.value }}</strong></p></div></div>
+        <div class="basic-grid"><div v-for="item in basicItems" :key="item.label"><i><img :src="detailIcon(item.icon)" alt=""></i><p><small>{{ item.label }}</small><strong>{{ item.value }}</strong></p></div></div>
       </section>
 
       <section v-if="reminderLines.length" class="pet-card reminder-card">
@@ -97,7 +100,7 @@ function useFallback(event: Event, fallback: string) {
         <dl><div v-if="lostAtText"><dt>走失时间：</dt><dd>{{ lostAtText }}</dd></div><div v-if="lost.location"><dt>走失地点：</dt><dd>{{ lost.location }}</dd></div><div v-if="lost.featureNote"><dt>特征备注：</dt><dd>{{ lost.featureNote }}</dd></div></dl>
       </section>
 
-      <footer class="trust-footer"><b><AppIcon name="shield" :size="20"/></b><span>贴个码<br><small>扫码查看 · 可信信息</small></span></footer>
+      <PlateFooter/>
     </div>
   </article>
 </template>

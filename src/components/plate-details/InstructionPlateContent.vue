@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { mediaUrl, text, type ImageContent, type PlateContent } from '../../domain/plate'
 import AppIcon from '../AppIcon.vue'
+import PlateFooter from '../PlateFooter.vue'
 
 type InfoItem = { label: string; value: string }
 type Step = { title: string; description: string }
@@ -12,8 +13,7 @@ const name = computed(() => text(props.content.name) || props.displayName)
 const subtitle = computed(() => text(props.content.summary) || text(props.content.brand))
 const infoItems = computed(() => Array.isArray(props.content.infoItems) ? props.content.infoItems as InfoItem[] : [])
 const images = computed(() => {
-  const source = Array.isArray(props.content.images) ? props.content.images : props.content.cover ? [props.content.cover] : []
-  return source.map(image => mediaUrl(props.apiBase, image as ImageContent)).filter(Boolean)
+  return (props.content.images || []).map(image => mediaUrl(props.apiBase, image as ImageContent)).filter(Boolean)
 })
 const steps = computed(() => Array.isArray(props.content.steps) ? props.content.steps as Step[] : [])
 const notice = computed(() => text(props.content.notice))
@@ -47,6 +47,7 @@ async function copy(value: string) {
       <section v-if="steps.length" class="instruction-card instruction-steps"><h2><i><AppIcon name="steps" :size="19"/></i>操作步骤</h2><div v-for="(step,index) in steps" :key="index" class="instruction-step"><b>{{ index + 1 }}</b><div><strong>{{ step.title }}</strong><p>{{ step.description }}</p></div></div></section>
       <section v-if="notice" class="instruction-card instruction-notice"><h2><i><AppIcon name="warning" :size="19"/></i>注意事项</h2><p>{{ notice }}</p></section>
       <section v-if="ownerName || phone" class="instruction-card instruction-contact"><h2><i><AppIcon name="user" :size="19"/></i>遇到问题？</h2><strong v-if="ownerName">{{ ownerName }}</strong><p v-if="phone">{{ maskedPhone }}</p><button v-if="phone" @click="emit('contact')"><AppIcon name="phone" :size="18"/>联系设置人</button></section>
+      <PlateFooter/>
     </div>
     <div v-if="previewImage" class="instruction-image-preview" @click="previewImage = ''"><img :src="previewImage" alt="说明图片预览"></div>
   </article>

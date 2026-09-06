@@ -2,13 +2,14 @@
 import { computed, ref } from 'vue'
 import { mediaUrl, text, type ImageContent, type PlateContent, type PlateTypeInfo } from '../../domain/plate'
 import AppIcon from '../AppIcon.vue'
+import PlateFooter from '../PlateFooter.vue'
 
 const props = defineProps<{ content: PlateContent; info: PlateTypeInfo; displayName: string; apiBase: string }>()
 defineEmits<{ feedback: [] }>()
 
 const previewIndex = ref<number | null>(null)
 const title = computed(() => text(props.content.title) || props.displayName)
-const photos = computed(() => (Array.isArray(props.content.photos) ? props.content.photos : []) as ImageContent[])
+const photos = computed(() => (props.content.images || []) as ImageContent[])
 const date = computed(() => text(props.content.memorialDate))
 const location = computed(() => text(props.content.location))
 const datePlace = computed(() => [date.value, location.value].filter(Boolean).join(' · '))
@@ -61,7 +62,7 @@ function openPreview(index: number) {
         <p><span />{{ signature }}</p>
       </section>
 
-      <footer class="memorial-ending">此页面由「贴个码」小程序生成 <AppIcon name="heart" :size="13" filled/></footer>
+      <PlateFooter/>
     </main>
 
     <button v-if="previewPhoto" class="memorial-preview" type="button" aria-label="关闭照片预览" @click="previewIndex = null">

@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { mediaUrl, text, type PlateContent } from '../../domain/plate'
 import AppIcon from '../AppIcon.vue'
+import PlateFooter from '../PlateFooter.vue'
 
 const props = defineProps<{ content: PlateContent; displayName: string; apiBase: string }>()
 defineEmits<{ contact: []; feedback: [] }>()
@@ -39,7 +40,7 @@ const phone = computed(() => props.content.contact?.value || '')
         <h2><i><AppIcon name="bell" :size="18"/></i>提示语</h2><p>{{ notice }}</p>
       </section>
       <p v-if="!guardian && !phone" class="student-no-contact">铭牌主人暂未设置紧急联系方式</p>
-      <footer><AppIcon name="shield" :size="16"/>贴个码 · 让联系更简单</footer>
+      <PlateFooter/>
     </div>
     <div v-if="phone" class="student-sticky"><button @click="$emit('contact')"><AppIcon name="phone" :size="21"/>联系家长</button></div>
   </article>
