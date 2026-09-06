@@ -15,7 +15,7 @@ export type PlateContent = Record<string, unknown> & {
   tagline?: string
   contactName?: string
   textSections?: Array<{ title?: string; content: string }>
-  steps?: Array<{ title: string; description: string }>
+  steps?: Array<{ title: string; description?: string; images?: ImageContent[] }>
   memorialDate?: string
   theme?: string
   location?: string
