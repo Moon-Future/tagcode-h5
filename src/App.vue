@@ -6,12 +6,15 @@ import { plateTypeInfo, type PublicPlate } from './domain/plate'
 const plate = ref<PublicPlate | null>(null)
 const loading = ref(true)
 const errorMessage = ref('')
+const unactivated = ref(false)
 const reportOpen = ref(false)
 const reportCategory = ref('OTHER')
 const reportDescription = ref('')
 const reportSubmitting = ref(false)
 const code = location.pathname.match(/\/p\/([^/?#]+)/)?.[1] || ''
 const apiBase = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+const claimBase = (import.meta.env.VITE_MINIPROGRAM_CLAIM_URL || '').replace(/\/$/, '')
+const claimUrl = computed(() => claimBase ? `${claimBase}${claimBase.includes('?') ? '&' : '?'}code=${encodeURIComponent(code)}` : '')
 
 const info = computed(() => plateTypeInfo[plate.value?.plateType || 'CUSTOM'] || plateTypeInfo.CUSTOM)
 const content = computed(() => plate.value?.content || {})
@@ -27,7 +30,10 @@ onMounted(async () => {
   try {
     const response = await fetch(`${apiBase}/api/v1/tag/public/plates/${encodeURIComponent(code)}`)
     const body = await response.json()
-    if (!response.ok) throw new Error(body.message || '铭牌暂时无法访问')
+    if (!response.ok) {
+      if (body.code === 'TAG_PLATE_UNACTIVATED') unactivated.value = true
+      throw new Error(body.message || '铭牌暂时无法访问')
+    }
     plate.value = body.data
     document.title = `${body.data.displayName} · 贴个码`
   } catch (error) {
@@ -93,6 +99,11 @@ async function submitReport() {
 
 <template>
   <main v-if="loading" class="state-page">正在加载铭牌…</main>
+  <main v-else-if="unactivated" class="state-page claim-state">
+    <img class="empty-state-icon" src="/images/states/empty-plate.png" alt=""><h1>这枚铭牌等待认领</h1>
+    <p>请打开“贴个码”微信小程序，使用包装内的激活码完成认领。</p>
+    <a v-if="claimUrl" class="claim-button" :href="claimUrl">打开小程序认领</a>
+  </main>
   <main v-else-if="errorMessage" class="state-page error-state">
     <img class="empty-state-icon" src="/images/states/empty-plate.png" alt=""><h1>暂时无法查看</h1><p>{{ errorMessage }}</p>
   </main>

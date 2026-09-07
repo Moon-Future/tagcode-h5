@@ -108,3 +108,4 @@ dl,dd { margin: 0; } dl > div { display: flex; padding: 8px 0; border-bottom: 1p
 
 /* 与小程序共用 CDN 图标语义，轮播计数避开宠物摘要卡片。 */
 .basic-grid > div > i img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:contain}.type-pet .image-carousel span,.type-vehicle .image-carousel span,.type-lost_and_found .image-carousel span{bottom:42px}
+.claim-button { display:inline-flex;align-items:center;justify-content:center;margin-top:18px;padding:13px 24px;border-radius:14px;background:#5264ff;color:#fff;text-decoration:none;font-weight:700;box-shadow:0 8px 22px rgba(82,100,255,.24); }

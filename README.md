@@ -9,6 +9,8 @@ npm run dev
 
 开发服务器将 `/api` 代理到 `http://127.0.0.1:8080`。部署时通过 `VITE_API_BASE_URL` 指定后端 HTTPS 地址，并将 `/p/*` 回退到 `index.html`。
 
+如需让未激活铭牌从 H5 一键进入认领页，请将 `VITE_MINIPROGRAM_CLAIM_URL` 配置为能按 `code` 参数跳转小程序认领页的 URL Link 中转入口；页面会自动追加 `code` 参数。
+
 手机联调时，后端生成二维码所用地址必须是手机可访问的地址，例如：
 
 ```bash
