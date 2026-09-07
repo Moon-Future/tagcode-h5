@@ -2,19 +2,19 @@
 import { computed, onMounted, ref } from 'vue'
 import { detailComponentFor } from './components/plate-details'
 import { plateTypeInfo, type PublicPlate } from './domain/plate'
+import { environment } from './config'
 
 const plate = ref<PublicPlate | null>(null)
 const loading = ref(true)
 const errorMessage = ref('')
 const unactivated = ref(false)
+const claimOpening = ref(false)
 const reportOpen = ref(false)
 const reportCategory = ref('OTHER')
 const reportDescription = ref('')
 const reportSubmitting = ref(false)
 const code = location.pathname.match(/\/p\/([^/?#]+)/)?.[1] || ''
-const apiBase = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
-const claimBase = (import.meta.env.VITE_MINIPROGRAM_CLAIM_URL || '').replace(/\/$/, '')
-const claimUrl = computed(() => claimBase ? `${claimBase}${claimBase.includes('?') ? '&' : '?'}code=${encodeURIComponent(code)}` : '')
+const apiBase = environment.apiBaseUrl.replace(/\/$/, '')
 
 const info = computed(() => plateTypeInfo[plate.value?.plateType || 'CUSTOM'] || plateTypeInfo.CUSTOM)
 const content = computed(() => plate.value?.content || {})
@@ -45,6 +45,22 @@ onMounted(async () => {
 
 function callOwner() {
   if (phone.value) location.href = `tel:${phone.value}`
+}
+
+async function openClaim() {
+  if (claimOpening.value) return
+  claimOpening.value = true
+  try {
+    const response = await fetch(`${apiBase}/api/v1/tag/public/plates/${encodeURIComponent(code)}/claim-link`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ envVersion: environment.miniProgramEnvVersion })
+    })
+    const body = await response.json()
+    if (!response.ok || !body.data?.urlLink) throw new Error(body.message || '暂时无法打开小程序')
+    location.href = body.data.urlLink
+  } catch (error) {
+    alert(error instanceof Error ? error.message : '暂时无法打开小程序')
+  } finally { claimOpening.value = false }
 }
 
 let inMemoryReportToken = ''
@@ -113,8 +129,8 @@ async function submitReport() {
         <div><b>1</b><span><strong>打开小程序</strong><small>进入“贴个码”认领页</small></span></div>
         <div><b>2</b><span><strong>输入激活码</strong><small>激活码在包装卡片或刮涂层下</small></span></div>
       </div>
-      <a v-if="claimUrl" class="claim-button" :href="claimUrl"><span>打开“贴个码”小程序</span><b></b></a>
-      <p v-else class="claim-fallback">请在微信中搜索“贴个码”小程序完成认领</p>
+      <button class="claim-button" :disabled="claimOpening" @click="openClaim"><span>{{ claimOpening ? '正在打开…' : '打开“贴个码”小程序' }}</span><b></b></button>
+      <p class="claim-fallback">当前将打开{{ environment.miniProgramEnvVersion === 'develop' ? '开发版' : '正式版' }}小程序</p>
       <footer>每枚实体铭牌仅可被一个账号认领</footer>
     </section>
   </main>
