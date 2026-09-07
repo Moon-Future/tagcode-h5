@@ -7,7 +7,7 @@ npm install
 npm run dev
 ```
 
-开发服务器将 `/api` 代理到 `http://127.0.0.1:9100`。在 `src/config.ts` 手动切换 `environmentName`，API 地址和 URL Link 打开的小程序版本会一起切换；部署时还需将 `/p/*` 回退到 `index.html`。
+开发服务器将 `/api` 代理到 `http://127.0.0.1:9100`。在 `src/config.ts` 手动切换 `environmentName`：`development` 使用本地 API + 开发版，`trial` 使用本地 API + 体验版，`production` 使用生产 API + 正式版；部署时还需将 `/p/*` 回退到 `index.html`。
 
 URL Link 由后端调用微信接口按铭牌编号动态生成。开发联调前，需要先在微信开发者工具上传一个可用版本（体验版可将环境切为 `trial`；开发版可将环境切为 `develop`），仅在 IDE 本地运行而未上传的代码无法生成 URL Link。若收到 `85079 miniprogram has no online release rid`，先上传/发布一个版本。
 
