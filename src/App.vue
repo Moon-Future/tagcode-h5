@@ -100,9 +100,23 @@ async function submitReport() {
 <template>
   <main v-if="loading" class="state-page">正在加载铭牌…</main>
   <main v-else-if="unactivated" class="state-page claim-state">
-    <img class="empty-state-icon" src="/images/states/empty-plate.png" alt=""><h1>这枚铭牌等待认领</h1>
-    <p>请打开“贴个码”微信小程序，使用包装内的激活码完成认领。</p>
-    <a v-if="claimUrl" class="claim-button" :href="claimUrl">打开小程序认领</a>
+    <section class="claim-shell">
+      <div class="claim-brand"><span></span>贴个码 · 实体铭牌</div>
+      <div class="claim-visual"><div class="claim-halo"></div><img src="/images/states/empty-plate.png" alt=""></div>
+      <div class="claim-copy">
+        <small>READY TO ACTIVATE</small>
+        <h1>这枚铭牌<br><em>等待你的认领</em></h1>
+        <p>认领后即可绑定到你的微信账号，并填写专属资料。</p>
+      </div>
+      <div class="claim-code"><span>铭牌编号</span><strong>{{ code }}</strong></div>
+      <div class="claim-steps">
+        <div><b>1</b><span><strong>打开小程序</strong><small>进入“贴个码”认领页</small></span></div>
+        <div><b>2</b><span><strong>输入激活码</strong><small>激活码在包装卡片或刮涂层下</small></span></div>
+      </div>
+      <a v-if="claimUrl" class="claim-button" :href="claimUrl"><span>打开“贴个码”小程序</span><b></b></a>
+      <p v-else class="claim-fallback">请在微信中搜索“贴个码”小程序完成认领</p>
+      <footer>每枚实体铭牌仅可被一个账号认领</footer>
+    </section>
   </main>
   <main v-else-if="errorMessage" class="state-page error-state">
     <img class="empty-state-icon" src="/images/states/empty-plate.png" alt=""><h1>暂时无法查看</h1><p>{{ errorMessage }}</p>
