@@ -15,6 +15,11 @@ const reportDescription = ref('')
 const reportSubmitting = ref(false)
 const code = location.pathname.match(/\/p\/([^/?#]+)/)?.[1] || ''
 const apiBase = environment.apiBaseUrl.replace(/\/$/, '')
+const miniProgramVersionLabel = {
+  develop: '开发版',
+  trial: '体验版',
+  release: '正式版'
+}[environment.miniProgramEnvVersion]
 
 const info = computed(() => plateTypeInfo[plate.value?.plateType || 'CUSTOM'] || plateTypeInfo.CUSTOM)
 const content = computed(() => plate.value?.content || {})
@@ -130,7 +135,7 @@ async function submitReport() {
         <div><b>2</b><span><strong>输入激活码</strong><small>激活码在包装卡片或刮涂层下</small></span></div>
       </div>
       <button class="claim-button" :disabled="claimOpening" @click="openClaim"><span>{{ claimOpening ? '正在打开…' : '打开“贴个码”小程序' }}</span><b></b></button>
-      <p class="claim-fallback">当前将打开{{ environment.miniProgramEnvVersion === 'develop' ? '开发版' : '正式版' }}小程序</p>
+      <p class="claim-fallback">当前将打开{{ miniProgramVersionLabel }}小程序</p>
       <footer>每枚实体铭牌仅可被一个账号认领</footer>
     </section>
   </main>
