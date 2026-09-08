@@ -8,23 +8,27 @@ const plate = ref<PublicPlate | null>(null)
 const loading = ref(true)
 const errorMessage = ref('')
 const unactivated = ref(false)
-const claimOpening = ref(false)
 const reportOpen = ref(false)
 const reportCategory = ref('OTHER')
 const reportDescription = ref('')
 const reportSubmitting = ref(false)
 const code = location.pathname.match(/\/p\/([^/?#]+)/)?.[1] || ''
 const apiBase = environment.apiBaseUrl.replace(/\/$/, '')
-const miniProgramVersionLabel = {
-  develop: '开发版',
-  trial: '体验版',
-  release: '正式版'
-}[environment.miniProgramEnvVersion]
 
 const info = computed(() => plateTypeInfo[plate.value?.plateType || 'CUSTOM'] || plateTypeInfo.CUSTOM)
 const content = computed(() => plate.value?.content || {})
 const phone = computed(() => content.value.contact?.value || '')
 const detailComponent = computed(() => detailComponentFor(plate.value?.plateType || 'CUSTOM'))
+
+async function readApiBody(response: Response) {
+  const text = await response.text()
+  if (!text) return {}
+  try {
+    return JSON.parse(text)
+  } catch {
+    throw new Error(response.ok ? '服务返回格式异常' : text)
+  }
+}
 
 onMounted(async () => {
   if (!code) {
@@ -34,7 +38,7 @@ onMounted(async () => {
   }
   try {
     const response = await fetch(`${apiBase}/api/v1/tag/public/plates/${encodeURIComponent(code)}`)
-    const body = await response.json()
+    const body = await readApiBody(response)
     if (!response.ok) {
       if (body.code === 'TAG_PLATE_UNACTIVATED') unactivated.value = true
       throw new Error(body.message || '铭牌暂时无法访问')
@@ -50,22 +54,6 @@ onMounted(async () => {
 
 function callOwner() {
   if (phone.value) location.href = `tel:${phone.value}`
-}
-
-async function openClaim() {
-  if (claimOpening.value) return
-  claimOpening.value = true
-  try {
-    const response = await fetch(`${apiBase}/api/v1/tag/public/plates/${encodeURIComponent(code)}/claim-link`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ envVersion: environment.miniProgramEnvVersion })
-    })
-    const body = await response.json()
-    if (!response.ok || !body.data?.urlLink) throw new Error(body.message || '暂时无法打开小程序')
-    location.href = body.data.urlLink
-  } catch (error) {
-    alert(error instanceof Error ? error.message : '暂时无法打开小程序')
-  } finally { claimOpening.value = false }
 }
 
 let inMemoryReportToken = ''
@@ -105,7 +93,7 @@ async function submitReport() {
       headers: { 'Content-Type': 'application/json', 'X-Report-Token': reportToken() },
       body: JSON.stringify({ category: reportCategory.value, description: reportDescription.value })
     })
-    const body = await response.json()
+    const body = await readApiBody(response)
     if (!response.ok) throw new Error(body.message || '举报提交失败')
     reportOpen.value = false
     reportDescription.value = ''
@@ -130,12 +118,10 @@ async function submitReport() {
         <p>认领后即可绑定到你的微信账号，并填写专属资料。</p>
       </div>
       <div class="claim-code"><span>铭牌编号</span><strong>{{ code }}</strong></div>
-      <div class="claim-steps">
-        <div><b>1</b><span><strong>打开小程序</strong><small>进入“贴个码”认领页</small></span></div>
-        <div><b>2</b><span><strong>输入激活码</strong><small>激活码在包装卡片或刮涂层下</small></span></div>
+      <div class="mini-program-guide">
+        <img src="/images/mini-program-logo.png" alt="贴个码铭牌小程序图标">
+        <div><small>请进入小程序</small><strong>“贴个码铭牌”</strong><span>进行领取激活</span></div>
       </div>
-      <button class="claim-button" :disabled="claimOpening" @click="openClaim"><span>{{ claimOpening ? '正在打开…' : '打开“贴个码”小程序' }}</span><b></b></button>
-      <p class="claim-fallback">当前将打开{{ miniProgramVersionLabel }}小程序</p>
       <footer>每枚实体铭牌仅可被一个账号认领</footer>
     </section>
   </main>
