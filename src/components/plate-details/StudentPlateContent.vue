@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { mediaUrl, text, type PlateContent } from '../../domain/plate'
 import AppIcon from '../AppIcon.vue'
 import PlateFooter from '../PlateFooter.vue'
+import ImageViewer from '../ImageViewer.vue'
 
 const props = defineProps<{ content: PlateContent; displayName: string; apiBase: string }>()
 defineEmits<{ contact: []; feedback: [] }>()
 const name = computed(() => text(props.content.name) || props.displayName)
 const avatar = computed(() => mediaUrl(props.apiBase, props.content.avatar))
+const avatarPreview = ref(false)
 const school = computed(() => text(props.content.school))
 const grade = computed(() => text(props.content.grade))
 const className = computed(() => text(props.content.className))
@@ -23,7 +25,7 @@ const phone = computed(() => props.content.contact?.value || '')
   <article class="student-detail">
     <header class="student-hero">
       <button class="hero-feedback" @click="$emit('feedback')"><AppIcon name="feedback" :size="15"/>反馈信息</button>
-      <div class="student-avatar"><img :src="avatar || '/images/student/default-avatar.png'" :alt="`${name}的头像`"></div>
+      <div class="student-avatar"><img :src="avatar || '/images/student/default-avatar.png'" :alt="`${name}的头像`" @click="avatarPreview=Boolean(avatar)"></div>
       <h1>{{ name }}</h1>
     </header>
     <div class="student-content">
@@ -43,5 +45,6 @@ const phone = computed(() => props.content.contact?.value || '')
       <PlateFooter/>
     </div>
     <div v-if="phone" class="student-sticky"><button @click="$emit('contact')"><AppIcon name="phone" :size="21"/>联系家长</button></div>
+    <ImageViewer v-if="avatarPreview&&avatar" :urls="[avatar]" :alt="`${name}的头像`" @close="avatarPreview=false"/>
   </article>
 </template>

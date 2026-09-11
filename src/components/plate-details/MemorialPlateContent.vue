@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { mediaUrl, text, type ImageContent, type PlateContent, type PlateTypeInfo } from '../../domain/plate'
 import AppIcon from '../AppIcon.vue'
 import PlateFooter from '../PlateFooter.vue'
+import ImageViewer from '../ImageViewer.vue'
 
 const props = defineProps<{ content: PlateContent; info: PlateTypeInfo; displayName: string; apiBase: string }>()
 defineEmits<{ feedback: [] }>()
@@ -17,6 +18,7 @@ const message = computed(() => text(props.content.message))
 const story = computed(() => text(props.content.story))
 const signature = computed(() => text(props.content.signature))
 const previewPhoto = computed(() => previewIndex.value === null ? null : photos.value[previewIndex.value])
+const previewUrls = computed(() => photos.value.map(photo => mediaUrl(props.apiBase, photo)).filter(Boolean))
 
 function openPreview(index: number) {
   previewIndex.value = index
@@ -64,9 +66,7 @@ function openPreview(index: number) {
       <PlateFooter/>
     </main>
 
-    <button v-if="previewPhoto" class="memorial-preview" type="button" aria-label="关闭照片预览" @click="previewIndex = null">
-      <img :src="mediaUrl(apiBase, previewPhoto)" :alt="title">
-    </button>
+    <ImageViewer v-if="previewPhoto" :urls="previewUrls" :initial-index="previewIndex || 0" :alt="title" @close="previewIndex=null"/>
   </article>
 </template>
 

@@ -3,12 +3,13 @@ import { computed, ref } from 'vue'
 import { mediaUrl, text, type ImageContent, type PlateContent } from '../../domain/plate'
 import AppIcon from '../AppIcon.vue'
 import PlateFooter from '../PlateFooter.vue'
+import ImageViewer from '../ImageViewer.vue'
 
 type InfoItem = { label: string; value: string }
 type Step = { title: string; description?: string; images?: ImageContent[] }
 const props = defineProps<{ content: PlateContent; displayName: string; apiBase: string }>()
 const emit = defineEmits<{ contact: []; feedback: [] }>()
-const previewImage = ref('')
+const previewIndex = ref<number | null>(null)
 const name = computed(() => text(props.content.name) || props.displayName)
 const subtitle = computed(() => text(props.content.summary) || text(props.content.brand))
 const infoItems = computed(() => Array.isArray(props.content.infoItems) ? props.content.infoItems as InfoItem[] : [])
@@ -17,6 +18,8 @@ const images = computed(() => {
 })
 const steps = computed(() => Array.isArray(props.content.steps) ? props.content.steps as Step[] : [])
 const stepImages = (step: Step) => (step.images || []).map(image => mediaUrl(props.apiBase, image)).filter(Boolean)
+const previewUrls = computed(() => [...images.value, ...steps.value.flatMap(step => stepImages(step))])
+function openPreview(url: string) { const index = previewUrls.value.indexOf(url); if (index >= 0) previewIndex.value = index }
 const notice = computed(() => text(props.content.notice))
 const ownerName = computed(() => text(props.content.ownerName) || text(props.content.ownerNickname))
 const phone = computed(() => props.content.contact?.value || '')
@@ -43,16 +46,16 @@ async function copy(value: string) {
       <div class="instruction-hero-copy"><small>生活说明</small><h1>{{ name }}</h1><p v-if="subtitle">{{ subtitle }}</p></div>
     </header>
     <div class="instruction-content">
-      <section v-if="images.length" class="instruction-card instruction-images"><img v-for="image in images" :key="image" :src="image" alt="说明图片" @click="previewImage = image"></section>
+      <section v-if="images.length" class="instruction-card instruction-images"><img v-for="image in images" :key="image" :src="image" alt="说明图片" @click="openPreview(image)"></section>
       <section v-if="infoItems.length" class="instruction-card instruction-info"><h2><i><AppIcon name="key" :size="19"/></i>重要信息</h2>
         <div v-for="(item,index) in infoItems" :key="index" class="instruction-secret"><div><small>{{ item.label }}</small><strong>{{ item.value }}</strong></div><span><button @click="copy(item.value)">复制</button></span></div>
       </section>
-      <section v-if="steps.length" class="instruction-card instruction-steps"><h2><i><AppIcon name="steps" :size="19"/></i>操作步骤</h2><div v-for="(step,index) in steps" :key="index" class="instruction-step"><b>{{ index + 1 }}</b><div><strong>{{ step.title }}</strong><p v-if="step.description">{{ step.description }}</p><div v-if="stepImages(step).length" class="instruction-step-images"><img v-for="image in stepImages(step)" :key="image" :src="image" :alt="`${step.title}操作图片`" loading="lazy" @click="previewImage = image"></div></div></div></section>
+      <section v-if="steps.length" class="instruction-card instruction-steps"><h2><i><AppIcon name="steps" :size="19"/></i>操作步骤</h2><div v-for="(step,index) in steps" :key="index" class="instruction-step"><b>{{ index + 1 }}</b><div><strong>{{ step.title }}</strong><p v-if="step.description">{{ step.description }}</p><div v-if="stepImages(step).length" class="instruction-step-images"><img v-for="image in stepImages(step)" :key="image" :src="image" :alt="`${step.title}操作图片`" loading="lazy" @click="openPreview(image)"></div></div></div></section>
       <section v-if="notice" class="instruction-card instruction-notice"><h2><i><AppIcon name="warning" :size="19"/></i>注意事项</h2><p>{{ notice }}</p></section>
       <section v-if="ownerName || phone" class="instruction-card instruction-contact"><h2><i><AppIcon name="user" :size="19"/></i>遇到问题？</h2><strong v-if="ownerName">{{ ownerName }}</strong><p v-if="phone">{{ maskedPhone }}</p><button v-if="phone" @click="emit('contact')"><AppIcon name="phone" :size="18"/>联系设置人</button></section>
       <PlateFooter/>
     </div>
-    <div v-if="previewImage" class="instruction-image-preview" @click="previewImage = ''"><img :src="previewImage" alt="说明图片预览"></div>
+    <ImageViewer v-if="previewIndex!==null" :urls="previewUrls" :initial-index="previewIndex" alt="说明图片预览" @close="previewIndex=null"/>
   </article>
 </template>
 
@@ -135,5 +138,6 @@ async function copy(value: string) {
 .instruction-step-images { display: flex; width: 100%; flex-direction: column; gap: 8px; margin-top: 10px; }
 .instruction-image-preview { position: fixed; z-index: 50; inset: 0; display: grid; padding: 20px; background: rgb(8 18 13 / 92%); place-items: center; cursor: zoom-out; }
 .instruction-image-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.instruction-images img,.instruction-step-images img { height: auto; aspect-ratio: auto; }
 .instruction-content :deep(.plate-footer) { display:flex;align-items:center;justify-content:center;gap:6px;margin:22px 0 0;color:#8998aa;font-size:12px;line-height:1.4;text-align:center; }
 </style>

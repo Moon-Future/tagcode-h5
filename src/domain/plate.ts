@@ -1,5 +1,5 @@
 export type Contact = { type: string; value: string; privacyMode: string }
-export type ImageContent = { objectKey: string; altText?: string }
+export type ImageContent = { objectKey: string; altText?: string; width?: number; height?: number }
 
 export type PlateContent = Record<string, unknown> & {
   contact?: Contact

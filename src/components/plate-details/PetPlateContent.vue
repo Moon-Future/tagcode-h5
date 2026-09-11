@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { assetUrl, mediaUrl, text, type PlateContent } from '../../domain/plate'
 import AppIcon from '../AppIcon.vue'
 import ImageCarousel from '../ImageCarousel.vue'
 import PlateFooter from '../PlateFooter.vue'
+import ImageViewer from '../ImageViewer.vue'
 
 type LostInfo = { active?: boolean; lostAt?: string; location?: string; featureNote?: string; message?: string }
 
@@ -15,6 +16,7 @@ const defaultBackground = '/images/defaults/pet-background.jpg'
 
 const name = computed(() => text(props.content.name) || props.displayName)
 const avatarUrl = computed(() => mediaUrl(props.apiBase, props.content.avatar))
+const avatarPreview = ref(false)
 const images = computed(() => Array.isArray(props.content.images) ? props.content.images : [])
 const ownerName = computed(() => text(props.content.ownerNickname))
 const phone = computed(() => props.content.contact?.value || '')
@@ -71,7 +73,7 @@ function useFallback(event: Event, fallback: string) {
 
     <div class="pet-content-wrap">
       <section class="pet-summary-card">
-        <img class="summary-avatar" :src="avatarUrl || defaultAvatar" :alt="`${name}的头像`" @error="useFallback($event, defaultAvatar)">
+        <img class="summary-avatar" :src="avatarUrl || defaultAvatar" :alt="`${name}的头像`" @error="useFallback($event, defaultAvatar)" @click="avatarPreview=Boolean(avatarUrl)">
         <div class="summary-main">
           <div class="pet-name-line"><h1>{{ name }}</h1><AppIcon v-if="genderIcon" :name="genderIcon" class="gender-symbol" :size="20"/><strong v-if="isLost">走失中</strong></div>
           <div v-if="summaryItems.length" class="summary-meta"><span v-for="item in summaryItems" :key="item">{{ item }}</span></div>
@@ -102,5 +104,6 @@ function useFallback(event: Event, fallback: string) {
 
       <PlateFooter/>
     </div>
+    <ImageViewer v-if="avatarPreview&&avatarUrl" :urls="[avatarUrl]" :alt="`${name}的头像`" @close="avatarPreview=false"/>
   </article>
 </template>

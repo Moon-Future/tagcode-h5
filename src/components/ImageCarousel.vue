@@ -1,19 +1,21 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { mediaUrl, type ImageContent } from '../domain/plate'
+import ImageViewer from './ImageViewer.vue'
 
 const props = defineProps<{ images?: ImageContent[]; apiBase: string; fallback: string; alt: string }>()
 const current = ref(0)
 const dragOffset = ref(0)
 const dragging = ref(false)
 const horizontalDrag = ref(false)
-const previewUrl = ref('')
+const previewIndex = ref<number | null>(null)
 const suppressClick = ref(false)
 let startX = 0
 let startY = 0
 let pointerId: number | null = null
-const urls = computed(() => (props.images || []).map(image => mediaUrl(props.apiBase, image)).filter(Boolean))
-const slides = computed(() => urls.value.length ? urls.value : [props.fallback])
+const imageSlides = computed(() => (props.images || []).map(image => ({ url: mediaUrl(props.apiBase, image), portrait: Boolean(image.width && image.height && image.height > image.width) })).filter(item => item.url))
+const slides = computed(() => imageSlides.value.length ? imageSlides.value : [{ url: props.fallback, portrait: false }])
+const urls = computed(() => imageSlides.value.map(item => item.url))
 const trackStyle = computed(() => ({ transform: `translate3d(calc(${-current.value * 100}% + ${dragOffset.value}px),0,0)` }))
 function move(step: number) {
   current.value = Math.max(0, Math.min(urls.value.length - 1, current.value + step))
@@ -55,26 +57,27 @@ function endDrag(event: PointerEvent) {
   if (suppressClick.value) window.setTimeout(() => { suppressClick.value = false }, 0)
 }
 function cancelDrag() { dragging.value = false; horizontalDrag.value = false; pointerId = null; dragOffset.value = 0 }
-function openPreview(index: number) {
-  if (!suppressClick.value && urls.value[index]) previewUrl.value = urls.value[index]
-}
+function openPreview(index: number) { if (!suppressClick.value && urls.value[index]) previewIndex.value = index }
 </script>
 
 <template>
   <div class="image-carousel" :class="{ dragging }" @pointerdown="startDrag" @pointermove="drag" @pointerup="endDrag" @pointercancel="cancelDrag">
     <div class="carousel-track" :class="{ dragging }" :style="trackStyle">
-      <img v-for="(url, index) in slides" :key="url || index" :src="url" :alt="index === current ? alt : ''" draggable="false" @click="openPreview(index)">
+      <div v-for="(slide, index) in slides" :key="slide.url || index" :class="['carousel-slide',{portrait:slide.portrait}]" @click="openPreview(index)">
+        <img v-if="slide.portrait" class="slide-backdrop" :src="slide.url" alt="" draggable="false">
+        <img class="slide-image" :src="slide.url" :alt="index === current ? alt : ''" draggable="false">
+      </div>
     </div>
     <template v-if="urls.length > 1">
       <button v-if="current > 0" class="previous" aria-label="上一张" @pointerdown.stop @click="move(-1)">‹</button>
       <button v-if="current < urls.length - 1" class="next" aria-label="下一张" @pointerdown.stop @click="move(1)">›</button>
       <span>{{ current + 1 }}/{{ urls.length }}</span>
     </template>
-    <button v-if="previewUrl" class="image-preview" type="button" aria-label="关闭图片预览" @pointerdown.stop @click.stop="previewUrl = ''"><img :src="previewUrl" :alt="alt"></button>
+    <ImageViewer v-if="previewIndex!==null" :urls="urls" :initial-index="previewIndex" :alt="alt" @close="previewIndex=null"/>
   </div>
 </template>
 
 <style scoped>
-.image-carousel{position:relative;width:100%;height:100%;overflow:hidden;cursor:grab;touch-action:pan-y;user-select:none}.image-carousel.dragging{cursor:grabbing}.carousel-track{display:flex;width:100%;height:100%;transition:transform .32s cubic-bezier(.22,.72,.25,1);will-change:transform}.carousel-track.dragging{transition:none}.carousel-track img{display:block;width:100%;height:100%;flex:0 0 100%;object-fit:cover;pointer-events:none}.image-carousel button{position:absolute;z-index:3;top:50%;width:34px;height:42px;transform:translateY(-50%);border:0;background:rgba(0,0,0,.34);color:#fff;font-size:28px;line-height:1}.previous{left:0;border-radius:0 10px 10px 0}.next{right:0;border-radius:10px 0 0 10px}.image-carousel span{position:absolute;z-index:4;right:14px;bottom:14px;padding:4px 9px;border-radius:999px;background:rgba(0,0,0,.58);color:#fff;font-size:12px;line-height:1.4;backdrop-filter:blur(4px)}
+.image-carousel{position:relative;width:100%;height:100%;overflow:hidden;cursor:grab;touch-action:pan-y;user-select:none}.image-carousel.dragging{cursor:grabbing}.carousel-track{display:flex;width:100%;height:100%;transition:transform .32s cubic-bezier(.22,.72,.25,1);will-change:transform}.carousel-track.dragging{transition:none}.carousel-slide{position:relative;width:100%;height:100%;overflow:hidden;flex:0 0 100%;background:#202124}.carousel-slide img{pointer-events:none}.slide-image{position:relative;z-index:1;display:block;width:100%;height:100%;object-fit:cover}.carousel-slide.portrait .slide-image{object-fit:contain}.slide-backdrop{position:absolute;inset:-24px;width:calc(100% + 48px);height:calc(100% + 48px);object-fit:cover;filter:blur(22px);opacity:.72;transform:scale(1.08)}.image-carousel button{position:absolute;z-index:3;top:50%;width:34px;height:42px;transform:translateY(-50%);border:0;background:rgba(0,0,0,.34);color:#fff;font-size:28px;line-height:1}.previous{left:0;border-radius:0 10px 10px 0}.next{right:0;border-radius:10px 0 0 10px}.image-carousel span{position:absolute;z-index:4;right:14px;bottom:14px;padding:4px 9px;border-radius:999px;background:rgba(0,0,0,.58);color:#fff;font-size:12px;line-height:1.4;backdrop-filter:blur(4px)}
 .image-carousel .image-preview{position:fixed;z-index:100;inset:0;display:grid;width:100%;height:100%;padding:18px;border:0;border-radius:0;background:rgba(8,10,14,.92);place-items:center;transform:none}.image-carousel .image-preview img{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;pointer-events:none}
 </style>
