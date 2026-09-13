@@ -3,8 +3,12 @@ import { computed, onMounted, ref } from 'vue'
 import { detailComponentFor } from './components/plate-details'
 import { plateTypeInfo, type PublicPlate } from './domain/plate'
 import { environment } from './config'
+import PromotionPlatePage from './components/PromotionPlatePage.vue'
+
+type PromotionPlate = { publicCode:string; name:string; description:string; imageUrl:string|null }
 
 const plate = ref<PublicPlate | null>(null)
+const promotion = ref<PromotionPlate | null>(null)
 const loading = ref(true)
 const errorMessage = ref('')
 const unactivated = ref(false)
@@ -12,7 +16,7 @@ const reportOpen = ref(false)
 const reportCategory = ref('OTHER')
 const reportDescription = ref('')
 const reportSubmitting = ref(false)
-const code = location.pathname.match(/\/p\/([^/?#]+)/)?.[1] || ''
+const code = location.pathname.match(/^\/p\/([^/?#]+)\/?$/)?.[1] || ''
 const apiBase = environment.apiBaseUrl.replace(/\/$/, '')
 
 const info = computed(() => plateTypeInfo[plate.value?.plateType || 'CUSTOM'] || plateTypeInfo.CUSTOM)
@@ -37,14 +41,20 @@ onMounted(async () => {
     return
   }
   try {
-    const response = await fetch(`${apiBase}/api/v1/tag/public/plates/${encodeURIComponent(code)}`)
+    const endpoint = `/api/v1/tag/public/entries/${encodeURIComponent(code)}`
+    const response = await fetch(`${apiBase}${endpoint}`)
     const body = await readApiBody(response)
     if (!response.ok) {
       if (body.code === 'TAG_PLATE_UNACTIVATED') unactivated.value = true
       throw new Error(body.message || '铭牌暂时无法访问')
     }
-    plate.value = body.data
-    document.title = `${body.data.displayName} · 贴个码`
+    if (body.data.kind === 'PROMOTION') {
+      promotion.value = body.data.content
+      document.title = `${body.data.content.name} · 贴个码`
+    } else {
+      plate.value = body.data.content
+      document.title = `${body.data.content.displayName} · 贴个码`
+    }
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '铭牌加载失败'
   } finally {
@@ -108,6 +118,7 @@ async function submitReport() {
 
 <template>
   <main v-if="loading" class="state-page">正在加载铭牌…</main>
+  <PromotionPlatePage v-else-if="promotion" :name="promotion.name" :description="promotion.description" :image-url="promotion.imageUrl" />
   <main v-else-if="unactivated" class="state-page claim-state">
     <section class="claim-shell">
       <div class="claim-brand"><span></span>贴个码 · 实体铭牌</div>
