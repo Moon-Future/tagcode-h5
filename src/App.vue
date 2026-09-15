@@ -17,6 +17,7 @@ const reportCategory = ref('OTHER')
 const reportDescription = ref('')
 const reportSubmitting = ref(false)
 const code = location.pathname.match(/^\/p\/([^/?#]+)\/?$/)?.[1] || ''
+const preview = new URLSearchParams(location.search).get('preview') === '1'
 const apiBase = environment.apiBaseUrl.replace(/\/$/, '')
 
 const info = computed(() => plateTypeInfo[plate.value?.plateType || 'CUSTOM'] || plateTypeInfo.CUSTOM)
@@ -41,7 +42,7 @@ onMounted(async () => {
     return
   }
   try {
-    const endpoint = `/api/v1/tag/public/entries/${encodeURIComponent(code)}`
+    const endpoint = `/api/v1/tag/public/entries/${encodeURIComponent(code)}${preview ? '?preview=true' : ''}`
     const response = await fetch(`${apiBase}${endpoint}`)
     const body = await readApiBody(response)
     if (!response.ok) {
