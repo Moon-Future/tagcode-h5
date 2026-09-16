@@ -51,7 +51,7 @@ onMounted(async () => {
     }
     if (body.data.kind === 'PROMOTION') {
       promotion.value = body.data.content
-      document.title = `${body.data.content.name} · 贴个码`
+      document.title = '贴个码'
     } else {
       plate.value = body.data.content
       document.title = `${body.data.content.displayName} · 贴个码`
